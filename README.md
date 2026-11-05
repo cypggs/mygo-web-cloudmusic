@@ -1,54 +1,86 @@
-# 网易云音乐 · MyGo
+# MyGo 云音乐 Web
 
-用 Go 和 [MyGo](https://github.com/egoist/mygo) 写的第三方网易云音乐桌面客户端，原生界面，无 WebView。
+将 [MyGo 云音乐桌面客户端](https://github.com/cypggs/mygo-cloudmusic) 复刻为可在浏览器中使用的 Web 应用。使用 Solid、TanStack Start 与 Node.js，保留原生客户端的侧边栏、推荐、歌单、播放栏和全屏歌词体验。
 
 ## 功能
 
-- 扫码登录，登录态保存在系统凭据存储中
-- 每日推荐、推荐歌单、排行榜、我的歌单
-- 搜索单曲、歌手、专辑、用户与播客，输入时显示搜索建议，保留搜索历史
-- 歌手页的热门与最新歌曲、专辑与动态，关注歌手；专辑页与用户页
-- 播客：浏览与收听节目，订阅播客；在本机把节目转写成字幕（Qwen3-ASR），像歌词一样随播放滚动
-- 私人 FM（推荐 / 熟悉 / 探索）与心动模式
-- 边下边播，支持标准 / 较高 / 极高 / 无损（FLAC）/ Hi-Res 音质
-- 听过的歌曲缓存在本机，再次播放无需等待
-- 音量均衡，暂停与继续时淡出淡入，拖动进度无杂音
-- 退出后再打开，从上次的播放队列与进度继续
-- 逐字歌词与翻译，正在播放页的「律动」视图与歌曲评论
-- 刘海播放器：在屏幕顶部刘海处显示迷你播放器，悬停展开（在设置中开启）
-- 喜欢歌曲、播放队列、随机与循环播放
-- 浅色 / 深色 / 跟随系统
+- 每日推荐、推荐歌单、官方榜单与完整排行榜
+- 歌单、歌手和专辑详情
+- 搜索单曲、歌手、专辑、歌单、用户与播客，带搜索建议和本地历史
+- 真实音频播放、播放队列、进度拖动、随机、循环、音量与喜欢
+- 全屏播放页、同步滚动歌词与翻译、歌曲评论
+- 私人 FM、扫码登录、我的歌单
+- 浅色、深色、跟随系统，以及桌面和手机响应式布局
 
-## 构建
+网易云音乐的版权、地区和会员限制仍然适用。
 
-需要 Go 1.27+。
+## 本地运行
+
+需要 Node.js 22+：
 
 ```bash
-go tool mygo dev     # 开发模式运行
-go tool mygo build   # 打包到 build/
-go test ./...        # 运行测试
-```
-
-## Web 版本
-
-`website/` 中包含复刻桌面界面的 Web 客户端，支持推荐、歌单、搜索、播放、歌词、评论、私人 FM 与扫码登录。
-
-```bash
-npm install
+git clone https://github.com/cypggs/mygo-web-cloudmusic.git
+cd mygo-web-cloudmusic
+npm ci
 npm run build
-npm run start       # http://localhost:3000
+npm run start
 ```
 
-Web 版需要同时运行 `website/server.mjs` 提供的同源接口，不能仅部署静态文件。详见 [website/README.md](website/README.md)。
+访问 `http://localhost:3000`。可通过 `PORT` 修改端口：
 
-生产部署支持 Docker Compose、普通 Linux 云服务器（Node.js + systemd）以及 Dockerfile PaaS，完整步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。
+```bash
+PORT=8080 NODE_ENV=production npm run start
+```
+
+## Docker 部署
+
+```bash
+docker compose up -d --build
+```
+
+健康检查：`http://localhost:3000/api/health`。
+
+支持普通 Linux 云服务器、Docker Compose、systemd、Nginx/Caddy，以及 Railway、Render、Fly.io 等 Dockerfile 平台。完整步骤见 **[部署指南](DEPLOYMENT.md)**。
+
+> 应用包含同源 Node.js API，不能只部署静态文件或纯静态 Pages。
+
+## 项目结构
+
+```text
+website/
+├── src/            # Solid 页面、组件、播放器与样式
+├── public/         # 图标和示例音频
+├── server.mjs      # 静态页面与网易云同源 API 服务
+└── dist/client/    # 构建产物
+Dockerfile          # 通用生产镜像
+compose.yaml        # Docker Compose 部署
+DEPLOYMENT.md       # 云服务器与 PaaS 部署指南
+```
+
+## 验证
+
+```bash
+npm run build
+./node_modules/.bin/tsc -p website/tsconfig.json
+docker build -t mygo-web-cloudmusic .
+```
+
+## 桌面版
+
+仓库保留了原 Go/MyGo 桌面客户端源代码。桌面版需要 Go 1.27+：
+
+```bash
+go tool mygo dev
+go tool mygo build
+go test ./...
+```
 
 ## 致谢
 
 - [MyGo](https://github.com/egoist/mygo)：原生 UI 与应用框架
 - [NeteaseCloudMusicApi](https://github.com/Binaryify/NeteaseCloudMusicApi)：eapi 加密与登录流程的参考
 - [folia-major](https://github.com/chthollyphile/folia-major)：歌词动画效果的参考
-- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)、[Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR) 与 [Silero VAD](https://github.com/snakers4/silero-vad)：本机语音识别
+- [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)、[Qwen3-ASR](https://github.com/QwenLM/Qwen3-ASR) 与 [Silero VAD](https://github.com/snakers4/silero-vad)：原桌面客户端的本地语音识别
 
 本项目与网易云音乐官方无关，音乐版权归各权利人所有。
 

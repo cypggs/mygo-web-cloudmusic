@@ -34,12 +34,12 @@ sudo systemctl enable --now docker
 ### 2. 获取代码并启动
 
 ```bash
-git clone https://github.com/YOUR_ACCOUNT/mygo-web-cloudmusic.git
+git clone https://github.com/cypggs/mygo-web-cloudmusic.git
 cd mygo-web-cloudmusic
 docker compose up -d --build
 ```
 
-将 `YOUR_ACCOUNT` 替换为实际 GitHub 账号。服务默认监听服务器的 `3000` 端口：
+服务默认监听服务器的 `3000` 端口：
 
 ```bash
 curl http://127.0.0.1:3000/api/health
@@ -83,7 +83,7 @@ npm --version
 ### 2. 构建应用
 
 ```bash
-git clone https://github.com/YOUR_ACCOUNT/mygo-web-cloudmusic.git
+git clone https://github.com/cypggs/mygo-web-cloudmusic.git
 cd mygo-web-cloudmusic
 npm ci
 npm run build

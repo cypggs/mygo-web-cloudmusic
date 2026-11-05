@@ -250,7 +250,7 @@ export function MusicApp() {
       <aside class="app-sidebar" classList={{ 'mobile-open': mobileOpen() }}>
         <div class="sidebar-top">
           <div class="desktop-lights" aria-hidden="true"><i /><i /><i /></div>
-          <a class="app-brand" href="https://github.com/cypggs/mygo-cloudmusic" target="_blank" rel="noreferrer" title="查看源代码"><AppIcon size={30} /><span>MyGo 云音乐</span></a>
+          <a class="app-brand" href="https://github.com/cypggs/mygo-web-cloudmusic" target="_blank" rel="noreferrer" title="查看源代码"><AppIcon size={30} /><span>MyGo 云音乐</span></a>
           <button type="button" class="mobile-close icon-button" aria-label="关闭导航" onClick={() => setMobileOpen(false)}><Icon name="close" size={19} /></button>
         </div>
         <div class="search-wrap">
@@ -304,7 +304,7 @@ export function MusicApp() {
           <button type="button" class="mobile-menu icon-button" aria-label="打开导航" onClick={() => setMobileOpen(true)}><Icon name="queue" size={20} /></button>
           <div class="history-buttons"><button type="button" class="icon-button" disabled={!history().length} aria-label="返回" onClick={back}><Icon name="back" size={19} /></button><button type="button" class="icon-button" disabled={!forward().length} aria-label="前进" onClick={goForward}><Icon name="forward" size={19} /></button></div>
           <span class="topbar-title">{nav.find((item) => item.page === route().name)?.label || (route().name === 'playlist' ? '歌单' : route().name === 'search' ? '搜索' : 'MyGo 云音乐')}</span>
-          <a href="https://github.com/cypggs/mygo-cloudmusic" target="_blank" rel="noreferrer" class="icon-button github-link" aria-label="GitHub 源代码"><GitHubMark size={17} /></a>
+          <a href="https://github.com/cypggs/mygo-web-cloudmusic" target="_blank" rel="noreferrer" class="icon-button github-link" aria-label="GitHub 源代码"><GitHubMark size={17} /></a>
         </header>
         <div class="page-scroll" ref={pageScroll}>
           <Show when={route().name === 'home'}><HomePage now={now()} data={home()} loading={homeLoading()} error={homeError()} retry={loadHome} open={open} playPlaylist={playPlaylist} login={() => setLoginOpen(true)} /></Show>
