@@ -29,6 +29,20 @@ go tool mygo build   # 打包到 build/
 go test ./...        # 运行测试
 ```
 
+## Web 版本
+
+`website/` 中包含复刻桌面界面的 Web 客户端，支持推荐、歌单、搜索、播放、歌词、评论、私人 FM 与扫码登录。
+
+```bash
+npm install
+npm run build
+npm run start       # http://localhost:3000
+```
+
+Web 版需要同时运行 `website/server.mjs` 提供的同源接口，不能仅部署静态文件。详见 [website/README.md](website/README.md)。
+
+生产部署支持 Docker Compose、普通 Linux 云服务器（Node.js + systemd）以及 Dockerfile PaaS，完整步骤见 [DEPLOYMENT.md](DEPLOYMENT.md)。
+
 ## 致谢
 
 - [MyGo](https://github.com/egoist/mygo)：原生 UI 与应用框架

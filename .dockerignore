@@ -1,0 +1,14 @@
+.git
+.github
+.agents
+.claude
+node_modules
+website/node_modules
+website/dist
+website/.wrangler
+build
+.mygo
+*.log
+.DS_Store
+Dockerfile
+compose.yaml

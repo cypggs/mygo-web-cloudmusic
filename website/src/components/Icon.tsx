@@ -26,6 +26,20 @@ const paths = {
   disk: () => <><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" /></>,
   sparkle: () => <path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z" />,
   notch: () => <><rect x="2" y="4" width="20" height="16" rx="3" /><path d="M9 4v1.5a1.5 1.5 0 0 0 1.5 1.5h3A1.5 1.5 0 0 0 15 5.5V4" /></>,
+  podcast: () => <><rect x="8" y="2" width="8" height="13" rx="4" /><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8" /></>,
+  user: () => <><circle cx="12" cy="8" r="4" /><path d="M4 21a8 8 0 0 1 16 0" /></>,
+  settings: () => <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 9 19.37a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.63 15 1.7 1.7 0 0 0 3.08 14H3v-4h.08A1.7 1.7 0 0 0 4.63 9a1.7 1.7 0 0 0-.34-1.88l-.06-.06 2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.63 1.7 1.7 0 0 0 10 3.08V3h4v.08A1.7 1.7 0 0 0 15 4.63a1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06A1.7 1.7 0 0 0 19.37 9 1.7 1.7 0 0 0 20.92 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15z" /></>,
+  plus: () => <path d="M12 5v14M5 12h14" />,
+  back: () => <path d="m15 18-6-6 6-6" />,
+  forward: () => <path d="m9 18 6-6-6-6" />,
+  down: () => <path d="m6 9 6 6 6-6" />,
+  more: () => <><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" /><circle cx="19" cy="12" r="1" fill="currentColor" stroke="none" /></>,
+  close: () => <path d="M18 6 6 18M6 6l12 12" />,
+  check: () => <path d="m5 12 4 4L19 6" />,
+  logout: () => <><path d="M10 17l5-5-5-5M15 12H3M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /></>,
+  headset: () => <><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M3 14a2 2 0 0 1 2-2h2v8H5a2 2 0 0 1-2-2zM21 14a2 2 0 0 0-2-2h-2v8h2a2 2 0 0 0 2-2z" /></>,
+  mute: () => <><path d="M11 5 6 9H2v6h4l5 4zM16 9l5 6M21 9l-5 6" /></>,
+  external: () => <><path d="M14 3h7v7M10 14 21 3M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6" /></>,
 } satisfies Record<string, () => JSX.Element>
 
 export type IconName = keyof typeof paths

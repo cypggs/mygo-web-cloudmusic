@@ -5,8 +5,9 @@
     "website"
   ],
   "scripts": {
-    "dev": "bun --filter website dev",
-    "build": "bun --filter website build",
-    "deploy": "bun --filter website deploy"
+    "dev": "npm run dev --workspace website",
+    "build": "npm run build --workspace website",
+    "start": "npm run start --workspace website",
+    "deploy": "npm run deploy --workspace website"
   }
 }

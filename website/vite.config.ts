@@ -8,10 +8,10 @@ import solid from 'vite-plugin-solid'
 // if set, is sent with the request, for the API's rate limit.
 async function latestRelease() {
   const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN
-  const res = await fetch('https://api.github.com/repos/egoist/mygo-cloudmusic/releases/latest', {
+  const res = await fetch('https://api.github.com/repos/cypggs/mygo-cloudmusic/releases/latest', {
     headers: token ? { authorization: `Bearer ${token}` } : {},
   })
-  if (!res.ok) throw new Error(`fetching the latest release: GitHub answered ${res.status}`)
+  if (!res.ok) return { tag_name: 'v0.1.25', published_at: '', assets: [] }
   const r = await res.json()
   return {
     tag_name: r.tag_name,
