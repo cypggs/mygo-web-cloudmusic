@@ -31,6 +31,7 @@ export interface Track {
   reason?: string
   privilege?: { st: number; pl: number }
   localSrc?: string
+  streamUrl?: string
 }
 
 export interface Playlist {
@@ -76,7 +77,7 @@ export interface Comment {
 }
 
 export type Page =
-  | { name: 'home' | 'daily' | 'fm' | 'charts' | 'podcasts' }
+  | { name: 'home' | 'free' | 'daily' | 'fm' | 'charts' | 'podcasts' }
   | { name: 'playlist' | 'artist' | 'album'; id: number }
   | { name: 'search'; query: string; kind: number }
 

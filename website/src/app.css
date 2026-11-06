@@ -83,6 +83,65 @@ body:has(.music-app) { overflow: hidden; background: var(--web-bg); color: var(-
 .page-heading h1 { font-size: 30px; font-weight: 750; letter-spacing: -.6px; line-height: 1.2; }
 .section-title { margin: 34px 0 14px; font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
 
+/* Free radio: a modern, responsive interpretation of YiGe's compact player. */
+.yige-page { min-height: 100%; padding: 46px 40px 44px; background: radial-gradient(ellipse at 50% 0, #f7ffff 0, #e5f0f2 48%, #d9e7ea 100%); }
+.yige-intro { max-width: 880px; margin: 0 auto 24px; text-align: center; color: #203743; }
+.yige-intro p { color: #67818d; font-size: 10px; font-weight: 700; letter-spacing: 2px; }
+.yige-intro h1 { margin: 5px 0 7px; font-size: 32px; font-weight: 750; letter-spacing: -1px; }
+.yige-intro > span { color: #617984; font-size: 12.5px; }
+.yige-player { max-width: 880px; margin: 0 auto; overflow: hidden; border: 1px solid #263942; border-radius: 7px; background: #fff; color: #15242c; box-shadow: 0 20px 55px -22px rgb(35 65 75 / .5), 0 2px 5px rgb(35 65 75 / .18); }
+.yige-titlebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 38px; padding: 0 14px; background: linear-gradient(#465863, #293b46); color: #f3f8fa; }
+.yige-titlebar > div { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.yige-titlebar b, .yige-titlebar > div > span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.yige-titlebar b { font-size: 12px; }
+.yige-titlebar > div > span { color: #bfccd2; font-size: 11px; }
+.yige-free-label { flex: none; padding: 2px 8px; border: 1px solid rgb(255 255 255 / .2); border-radius: 3px; background: rgb(255 255 255 / .08); color: #dcebee; font-size: 10px; font-weight: 700; letter-spacing: .5px; }
+.yige-control-panel { display: flex; align-items: center; gap: 12px; min-height: 88px; padding: 14px 18px; background: linear-gradient(115deg, #69808d, #405968 60%, #354e5e); color: #fff; box-shadow: inset 0 1px rgb(255 255 255 / .16); }
+.yige-main-button, .yige-next-button { display: grid; place-items: center; flex: none; border: 1px solid rgb(255 255 255 / .18); background: rgb(255 255 255 / .1); color: #fff; box-shadow: 0 2px 4px rgb(0 0 0 / .15); transition: background .15s, transform .15s; }
+.yige-main-button { width: 52px; height: 52px; border-radius: 6px; }
+.yige-next-button { width: 38px; height: 38px; border-radius: 5px; }
+.yige-main-button:hover, .yige-next-button:hover { background: rgb(255 255 255 / .2); }
+.yige-main-button:active, .yige-next-button:active { transform: scale(.95); }
+.yige-main-button:disabled, .yige-next-button:disabled { opacity: .4; }
+.yige-current { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.yige-current b, .yige-current span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.yige-current b { font-size: 16px; }
+.yige-current span { color: rgb(255 255 255 / .65); font-size: 11px; }
+.yige-clock { padding: 5px 9px; border-radius: 4px; background: rgb(10 25 32 / .5); font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.yige-clock span { color: rgb(255 255 255 / .55); }
+.yige-auto { display: flex; align-items: center; gap: 5px; color: #d8e7e9; font-size: 10px; white-space: nowrap; }
+.yige-auto i { width: 6px; height: 6px; border-radius: 50%; background: #a8e6ba; box-shadow: 0 0 7px #a8e6ba; }
+.yige-toolbar { display: flex; align-items: center; gap: 7px; min-height: 36px; padding: 5px 10px; border-top: 1px solid rgb(255 255 255 / .25); border-bottom: 1px solid #b8c5ca; background: linear-gradient(#e4ecef, #cbd9df); }
+.yige-toolbar button { padding: 4px 9px; border: 1px solid #a9bac2; border-radius: 3px; background: linear-gradient(#fff, #e5edef); color: #3c515b; font-size: 10.5px; box-shadow: 0 1px 1px rgb(0 0 0 / .05); }
+.yige-toolbar button:hover { background: #fff; border-color: #7e98a4; }
+.yige-toolbar button:disabled { opacity: .45; }
+.yige-toolbar > span { color: #5a717c; font-size: 10px; }
+.yige-toolbar-note { margin-left: auto; }
+.yige-list { height: 390px; overflow-y: auto; background: #fff; scrollbar-width: thin; scrollbar-color: #9fb2ba #edf3f5; }
+.yige-row { display: flex; align-items: center; gap: 7px; width: 100%; min-height: 34px; padding: 0 13px; border-bottom: 1px solid #f0f3f4; color: #1b2a31; font-size: 12px; text-align: left; }
+.yige-row:hover { background: #eef6f8; }
+.yige-row.active { background: #fff084; color: #17252b; }
+.yige-bullet { color: #80949e; font-size: 10px; }
+.yige-row.active .yige-bullet { color: #4e5b40; }
+.yige-song-name { flex: 1; min-width: 0; overflow: hidden; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; }
+.yige-song-name > span { color: #667a83; font-weight: 400; }
+.yige-row.active .yige-song-name > span { color: #5c654b; }
+.yige-row-badge { padding: 0 4px; border: 1px solid #b5cbc2; border-radius: 2px; color: #4d7c64; font-size: 8px; font-weight: 700; }
+.yige-row.active .yige-row-badge { border-color: #a9a453; color: #64602e; }
+.yige-row time { width: 35px; color: #82949b; font-family: var(--mono); font-size: 10px; text-align: right; }
+.yige-row.active time { color: #5e664e; }
+.yige-loading { display: flex; align-items: center; justify-content: center; gap: 10px; height: 100%; color: #687d86; font-size: 12px; }
+.yige-loading button { margin-left: 8px; text-decoration: underline; }
+.yige-footer { display: flex; align-items: center; gap: 20px; min-height: 36px; padding: 0 13px; border-top: 1px solid #b8c5ca; background: linear-gradient(#dce7eb, #c8d7dc); color: #526a75; font-size: 10px; }
+.yige-footer span:nth-child(2) { margin-left: auto; }
+.yige-footer button { align-self: stretch; margin-right: -13px; padding: 0 16px; background: linear-gradient(#6d929f, #4b7484); color: #fff; font-size: 10px; font-weight: 600; }
+.yige-footer button:hover { background: #5d8593; }
+.yige-note { margin: 15px auto 0; color: #738b94; font-size: 10px; text-align: center; }
+:root[data-theme='dark'] .yige-page { background: radial-gradient(ellipse at 50% 0, #24343b 0, #1b292f 55%, #172229 100%); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .yige-page { background: radial-gradient(ellipse at 50% 0, #24343b 0, #1b292f 55%, #172229 100%); }
+}
+
 .artwork { position: relative; display: grid; place-items: center; overflow: hidden; flex: none; border-radius: 9px; background: var(--web-hover); color: var(--web-faint); }
 .artwork img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .artwork.round { border-radius: 50%; }
@@ -434,6 +493,25 @@ body:has(.music-app) { overflow: hidden; background: var(--web-bg); color: var(-
   .history-buttons { display: none; }
   .topbar-title { display: block; margin-left: 4px; }
   .page-content { padding: 56px 18px 38px; }
+  .yige-page { padding: 58px 12px 28px; }
+  .yige-intro { margin-bottom: 17px; padding: 0 8px; }
+  .yige-intro h1 { font-size: 28px; }
+  .yige-intro > span { font-size: 11px; }
+  .yige-control-panel { display: grid; grid-template-columns: 48px 34px minmax(0, 1fr) auto; gap: 9px; min-height: 100px; padding: 12px; }
+  .yige-main-button { width: 46px; height: 46px; }
+  .yige-next-button { width: 34px; height: 34px; }
+  .yige-clock { font-size: 10px; padding: 4px 6px; }
+  .yige-auto { display: none; }
+  .yige-current b { font-size: 13px; }
+  .yige-toolbar { gap: 4px; padding: 5px 7px; }
+  .yige-toolbar button { padding: 4px 6px; font-size: 9px; }
+  .yige-toolbar-note { display: none; }
+  .yige-list { height: 42vh; min-height: 260px; }
+  .yige-row { padding: 0 9px; font-size: 11px; }
+  .yige-footer { gap: 8px; font-size: 9px; }
+  .yige-footer span:nth-child(2) { display: none; }
+  .yige-footer button { margin-left: auto; padding: 0 11px; }
+  .yige-note { padding: 0 12px; line-height: 1.6; }
   .page-heading h1 { font-size: 28px; }
   .daily-card { height: 196px; border-radius: 20px; }
   .daily-copy { padding: 0 22px; }

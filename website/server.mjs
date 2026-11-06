@@ -131,6 +131,15 @@ function sized(url, size = 600) {
   return (url || '').replace(/^http:/, 'https:') + (url ? `?param=${size}y${size}` : '')
 }
 
+function shuffled(items) {
+  const out = [...items]
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[out[i], out[j]] = [out[j], out[i]]
+  }
+  return out
+}
+
 function rememberCookies(setCookies) {
   const next = {}
   for (const line of setCookies) {
@@ -176,6 +185,43 @@ async function api(req, res, url) {
       daily: tracks(daily.data?.dailySongs),
       recommended: (recommended.recommend || []).map((item) => ({ ...item, playCount: item.playcount ?? item.playCount })),
     }
+  } else if (p === '/api/free-radio') {
+    // A free song is one NetEase actually streams to an anonymous listener,
+    // not merely one whose catalog metadata lacks a VIP flag.
+    const candidates = await cached('free-radio-candidates', 300, async () => {
+      const [daily, hot, soaring, fresh] = await Promise.all([
+        get('/api/v3/discovery/recommend/songs'),
+        get('/api/v6/playlist/detail', { id: 3778678, n: 1000 }),
+        get('/api/v6/playlist/detail', { id: 19723756, n: 1000 }),
+        get('/api/v6/playlist/detail', { id: 3779629, n: 1000 }),
+      ])
+      const byID = new Map()
+      for (const item of [
+        ...tracks(daily.data?.dailySongs),
+        ...tracks(hot.playlist?.tracks),
+        ...tracks(soaring.playlist?.tracks),
+        ...tracks(fresh.playlist?.tracks),
+      ]) byID.set(item.id, item)
+      return [...byID.values()]
+    })
+    const pool = shuffled(candidates)
+    const available = []
+    for (let offset = 0; offset < pool.length && available.length < 30 && offset < 300; offset += 100) {
+      const batch = pool.slice(offset, offset + 100)
+      const { data } = await eapiPost('/api/song/enhance/player/url/v1', {
+        ids: JSON.stringify(batch.map((item) => item.id)),
+        level: 'standard',
+        encodeType: 'mp3',
+      })
+      const streams = new Map((data.data || []).map((item) => [Number(item.id), item]))
+      for (const item of batch) {
+        const stream = streams.get(item.id)
+        if (!stream?.url || !stream.size || stream.freeTrialInfo) continue
+        available.push({ ...item, streamUrl: stream.url.replace(/^http:/, 'https:'), fee: 0 })
+      }
+    }
+    if (!available.length) throw new Error('暂时没有可匿名播放的歌曲，请稍后重试')
+    out = { code: 200, tracks: shuffled(available).slice(0, 30), verifiedAt: new Date().toISOString() }
   } else if (p === '/api/playlist') {
     const data = await get('/api/v6/playlist/detail', { id: url.searchParams.get('id'), n: 1000 }, session)
     if (data.playlist) data.playlist.tracks = tracks(data.playlist.tracks)

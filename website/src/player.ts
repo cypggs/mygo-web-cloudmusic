@@ -41,7 +41,7 @@ let loadID = 0
 let frame = 0
 
 function persist() {
-  saveJSON('mygo-player', { queue: queue().map(({ localSrc, ...track }) => track), index: index() })
+  saveJSON('mygo-player', { queue: queue().map(({ localSrc, streamUrl, ...track }) => track), index: index() })
 }
 
 function tick() {
@@ -111,7 +111,7 @@ async function loadCurrent(autoplay: boolean) {
   setLoading(true)
   mediaSession(track)
   try {
-    let src = track.localSrc
+    let src = track.localSrc || track.streamUrl
     if (!src) {
       const quality = loadJSON('mygo-quality', 'exhigh')
       const result = await api<{ stream: { url: string } }>(`/api/stream?id=${track.id}&level=${quality}`)

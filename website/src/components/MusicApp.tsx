@@ -1,7 +1,7 @@
 import { For, Show, createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import { api, loadJSON, saveJSON } from '../api'
 import {
-  current, queue, playing, position, playerError, playQueue, toggle,
+  current, queue, playing, position, playerError, playQueue, toggle, next,
 } from '../player'
 import {
   artistNames, clock, coverUrl, plays,
@@ -9,7 +9,7 @@ import {
 } from '../types'
 import { AppIcon } from './AppIcon'
 import { Artwork } from './Artwork'
-import { Icon, GitHubMark, type IconName } from './Icon'
+import { Icon, GitHubMark, Transport, type IconName } from './Icon'
 import { LikeButton, PlayerBar, PlayingBars } from './PlayerBar'
 import { NowPlaying } from './NowPlaying'
 import { LoginDialog } from './LoginDialog'
@@ -18,6 +18,7 @@ import { SettingsDialog } from './SettingsDialog'
 const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
 const emptyHome: HomeData = { featured: [], charts: [], daily: [], recommended: [] }
 const nav: { icon: IconName; label: string; page: Page['name'] }[] = [
+  { icon: 'music', label: '免费畅听', page: 'free' },
   { icon: 'home', label: '为你推荐', page: 'home' },
   { icon: 'calendar', label: '每日推荐', page: 'daily' },
   { icon: 'radio', label: '私人 FM', page: 'fm' },
@@ -40,12 +41,15 @@ function greeting(hour: number) {
 
 export function MusicApp() {
   const [now, setNow] = createSignal(new Date(2026, 0, 1, 12))
-  const [route, setRoute] = createSignal<Page>({ name: 'home' })
+  const [route, setRoute] = createSignal<Page>({ name: 'free' })
   const [history, setHistory] = createSignal<Page[]>([])
   const [forward, setForward] = createSignal<Page[]>([])
   const [home, setHome] = createSignal<HomeData>(emptyHome)
   const [homeLoading, setHomeLoading] = createSignal(true)
   const [homeError, setHomeError] = createSignal('')
+  const [freeTracks, setFreeTracks] = createSignal<Track[]>([])
+  const [freeLoading, setFreeLoading] = createSignal(true)
+  const [freeError, setFreeError] = createSignal('')
   const [playlist, setPlaylist] = createSignal<Playlist>()
   const [artist, setArtist] = createSignal<Artist & { hotSongs?: Track[] }>()
   const [album, setAlbum] = createSignal<Album & { songs?: Track[] }>()
@@ -89,6 +93,16 @@ export function MusicApp() {
     finally { setHomeLoading(false) }
   }
 
+  async function loadFree() {
+    setFreeLoading(true)
+    setFreeError('')
+    try {
+      const data = await api<{ tracks: Track[] }>(`/api/free-radio?refresh=${Date.now()}`)
+      setFreeTracks(data.tracks)
+    } catch (error) { setFreeError(error instanceof Error ? error.message : '免费歌曲加载失败') }
+    finally { setFreeLoading(false) }
+  }
+
   async function loadAccount() {
     try {
       const data = await api<{ profile?: Profile }>('/api/account')
@@ -107,6 +121,11 @@ export function MusicApp() {
 
   async function loadFor(page: Page) {
     setPageError('')
+    if (page.name === 'free') {
+      if (!freeTracks().length && !freeLoading()) void loadFree()
+      return
+    }
+    if (['home', 'daily', 'charts'].includes(page.name) && !home().charts.length && !homeLoading()) void loadHome()
     if (page.name === 'playlist') {
       setPageLoading(true); setPlaylist(undefined)
       try {
@@ -223,7 +242,7 @@ export function MusicApp() {
   onMount(() => {
     setNow(new Date())
     setSearchHistory(loadJSON('mygo-search-history', []))
-    void loadHome()
+    void loadFree()
     void loadAccount()
     const keys = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement
@@ -307,6 +326,7 @@ export function MusicApp() {
           <a href="https://github.com/cypggs/mygo-web-cloudmusic" target="_blank" rel="noreferrer" class="icon-button github-link" aria-label="GitHub 源代码"><GitHubMark size={17} /></a>
         </header>
         <div class="page-scroll" ref={pageScroll}>
+          <Show when={route().name === 'free'}><FreePage tracks={freeTracks()} loading={freeLoading()} error={freeError()} refresh={loadFree} /></Show>
           <Show when={route().name === 'home'}><HomePage now={now()} data={home()} loading={homeLoading()} error={homeError()} retry={loadHome} open={open} playPlaylist={playPlaylist} login={() => setLoginOpen(true)} /></Show>
           <Show when={route().name === 'daily'}><DailyPage data={home()} loading={homeLoading()} retry={loadHome} /></Show>
           <Show when={route().name === 'charts'}><ChartsPage charts={home().charts} loading={homeLoading()} open={open} playPlaylist={playPlaylist} /></Show>
@@ -324,6 +344,47 @@ export function MusicApp() {
       <Show when={loginOpen()}><LoginDialog onClose={() => setLoginOpen(false)} onLogged={(user) => { setProfile(user); void loadUserPlaylists(user.userId); void loadHome(); notify(`欢迎回来，${user.nickname}`) }} /></Show>
       <Show when={settingsOpen()}><SettingsDialog profile={profile()} onLogin={() => { setSettingsOpen(false); setLoginOpen(true) }} onLogout={() => { setProfile(undefined); setMine([]); setSaved([]); notify('已退出登录') }} onClose={() => setSettingsOpen(false)} /></Show>
       <Show when={toast()}><div class="app-toast" role="status">{toast()}</div></Show>
+    </div>
+  )
+}
+
+function FreePage(props: { tracks: Track[]; loading: boolean; error: string; refresh: () => void | Promise<void> }) {
+  const active = () => !!current() && props.tracks.some((track) => track.id === current()!.id)
+  const shown = () => active() ? current()! : props.tracks[0]
+  const changeBatch = async () => {
+    const continuePlaying = active() && playing()
+    await props.refresh()
+    if (continuePlaying && props.tracks.length) playQueue(props.tracks, 0)
+  }
+  const start = () => {
+    if (!props.tracks.length) return
+    if (active()) toggle()
+    else playQueue([...props.tracks].sort(() => Math.random() - 0.5), 0)
+  }
+  const shufflePlay = () => playQueue([...props.tracks].sort(() => Math.random() - 0.5), 0)
+  return (
+    <div class="yige-page">
+      <div class="yige-intro"><p>FREE RADIO · 无需登录</p><h1>免费畅听</h1><span>随机好歌，一首接一首。只收录已验证可匿名完整播放的歌曲。</span></div>
+      <section class="yige-player" aria-label="免费随机音乐播放器">
+        <header class="yige-titlebar"><div><Icon name="music" size={14} /><b>{shown()?.name || '自由自在听音乐'}</b><Show when={shown()}><span> - {artistNames(shown())}</span></Show></div><span class="yige-free-label">100% 免费</span></header>
+        <div class="yige-control-panel">
+          <button type="button" class="yige-main-button" disabled={!props.tracks.length} aria-label={active() && playing() ? '暂停' : '开始畅听'} onClick={start}><Transport name={active() && playing() ? 'pause' : 'play'} size={26} /></button>
+          <button type="button" class="yige-next-button" disabled={!props.tracks.length} aria-label="下一首" onClick={() => active() ? next() : start()}><Transport name="next" size={22} /></button>
+          <div class="yige-current"><b>{shown()?.name || '准备开始'}</b><span>{shown() ? artistNames(shown()) : '正在寻找免费好歌'}</span></div>
+          <div class="yige-clock">{clock(active() ? position() : 0)} <span>/ {clock((shown()?.dt || 0) / 1000)}</span></div>
+          <span class="yige-auto"><i />自动连播</span>
+        </div>
+        <div class="yige-toolbar"><button type="button" disabled={!props.tracks.length} onClick={() => playQueue(props.tracks, 0)}>重置列表</button><button type="button" disabled={!props.tracks.length} onClick={shufflePlay}>随机打乱</button><button type="button" disabled={props.loading} onClick={() => void changeBatch()}>{props.loading ? '正在寻找…' : '换一批'}</button><span>({props.tracks.length})</span><span class="yige-toolbar-note">无会员 · 无试听片段</span></div>
+        <div class="yige-list">
+          <Show when={!props.loading || props.tracks.length} fallback={<div class="yige-loading"><span class="spinner dark" />正在验证可以免费播放的歌曲…</div>}>
+            <Show when={!props.error} fallback={<div class="yige-loading">{props.error}<button type="button" onClick={props.refresh}>重试</button></div>}>
+              <For each={props.tracks}>{(track, i) => <button type="button" class="yige-row" classList={{ active: current()?.id === track.id }} onClick={() => playQueue(props.tracks, i())}><span class="yige-bullet">▪</span><span class="yige-song-name">{track.name}<span> - {artistNames(track)}</span></span><span class="yige-row-badge">免费</span><time>{clock(track.dt / 1000)}</time></button>}</For>
+            </Show>
+          </Show>
+        </div>
+        <footer class="yige-footer"><span>☑ 已验证匿名完整播放</span><span>播放模式：列表循环 · 自动下一首</span><button type="button" onClick={shufflePlay}>随机播放 ▶</button></footer>
+      </section>
+      <p class="yige-note">灵感来自亦歌的极简音乐列表 · 歌曲来自网易云音乐公开曲库 · 每次换一批都会重新验证</p>
     </div>
   )
 }
